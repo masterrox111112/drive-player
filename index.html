@@ -250,7 +250,7 @@
         📂 Navegador
       </div>
       <div class="breadcrumb" id="breadcrumb">
-        <span class="bc-item" onclick="goRoot()">Meu Drive</span>
+        <span class="bc-item" onclick="goRoot()">Meus Cursos</span>
       </div>
       <div class="sidebar-list" id="sidebarList">
         <div class="empty">
@@ -405,7 +405,7 @@ async function gFetch(url, raw=false){
 
 // ── NAVIGATION ──
 async function loadFolder(id, name){
-  if(id==='root'){ folderStack=[{id:'root',name:'Meu Drive'}]; }
+  if(id==='root'){ folderStack=[{id:'root',name:'Meus Cursos'}]; }
   else {
     const idx = folderStack.findIndex(f=>f.id===id);
     if(idx>=0) folderStack=folderStack.slice(0,idx+1);
@@ -415,7 +415,7 @@ async function loadFolder(id, name){
   showSidebarLoading();
 
   try{
-    const q = encodeURIComponent(`'${id}' in parents and trashed=false`);
+    const q = id === 'root' ? encodeURIComponent('sharedWithMe and trashed=false and mimeType='application/vnd.google-apps.folder'') : encodeURIComponent(`'${id}' in parents and trashed=false`);
     const fields = 'files(id,name,mimeType)';
     const data = await gFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=name&pageSize=200`);
     renderSidebar(data.files||[]);
