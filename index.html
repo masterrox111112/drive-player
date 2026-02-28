@@ -333,7 +333,7 @@
   </div>
 </div>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 <script>
 const CLIENT_ID = '275014603111-av3r44rb0shbah6v0kbrbh6bm94q6due.apps.googleusercontent.com';
 let accessToken = null;
@@ -374,7 +374,22 @@ function sendTokenSW(t){
   if(navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({type:'SET_TOKEN',token:t});
 }
 
-function signIn(){ tokenClient.requestAccessToken(); }
+function signIn(){
+  if(!tokenClient){
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.readonly',
+      callback: r => {
+        if(r.error){ alert('Erro no login: '+r.error); return; }
+        accessToken = r.access_token;
+        sessionStorage.setItem('drive_token', accessToken);
+        sendTokenSW(accessToken);
+        onLogin();
+      }
+    });
+  }
+  tokenClient.requestAccessToken();
+}
 function signOut(){
   accessToken=null; sessionStorage.clear();
   document.getElementById('loginScreen').style.display='flex';
