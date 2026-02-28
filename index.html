@@ -333,7 +333,30 @@
   </div>
 </div>
 
-<script src="https://accounts.google.com/gsi/client"></script>
+<script>
+// OAuth via redirecionamento — sem popup, funciona com qualquer antivírus
+const CLIENT_ID = '275014603111-av3r44rb0shbah6v0kbrbh6bm94q6due.apps.googleusercontent.com';
+const REDIRECT_URI = location.origin + location.pathname;
+const SCOPE = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/userinfo.profile';
+
+function signIn() {
+  const url = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    response_type: 'token',
+    scope: SCOPE,
+    include_granted_scopes: 'true',
+  });
+  location.href = url;
+}
+
+// Pega token do hash da URL após redirecionamento
+function getTokenFromHash() {
+  const hash = location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  return params.get('access_token');
+}
+</script>
 <script>
 const CLIENT_ID = '275014603111-av3r44rb0shbah6v0kbrbh6bm94q6due.apps.googleusercontent.com';
 let accessToken = null;
@@ -349,20 +372,19 @@ if('serviceWorker' in navigator){
 }
 
 window.onload = () => {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/drive.readonly',
-    callback: r => {
-      if(r.error){ alert('Erro no login'); return; }
-      accessToken = r.access_token;
-      sessionStorage.setItem('drive_token', accessToken);
-      sendTokenSW(accessToken);
-      onLogin();
-    }
-  });
+  // Pega token do hash após redirect do Google
+  const tokenFromHash = getTokenFromHash();
+  if (tokenFromHash) {
+    accessToken = tokenFromHash;
+    sessionStorage.setItem('drive_token', accessToken);
+    sendTokenSW(accessToken);
+    history.replaceState(null, '', location.pathname + location.search);
+    onLogin();
+    return;
+  }
+  // Token salvo na sessão
   const saved = sessionStorage.getItem('drive_token');
-  if(saved){ accessToken = saved; sendTokenSW(accessToken); onLogin(); }
-
+  if(saved){ accessToken = saved; sendTokenSW(accessToken); onLogin(); return; }
   // Abrir com Drive
   const p = new URLSearchParams(location.search);
   const state = p.get('state');
@@ -372,23 +394,6 @@ window.onload = () => {
 function sendTokenSW(t){
   navigator.serviceWorker.ready.then(r=>r.active?.postMessage({type:'SET_TOKEN',token:t}));
   if(navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({type:'SET_TOKEN',token:t});
-}
-
-function signIn(){
-  if(!tokenClient){
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/drive.readonly',
-      callback: r => {
-        if(r.error){ alert('Erro no login: '+r.error); return; }
-        accessToken = r.access_token;
-        sessionStorage.setItem('drive_token', accessToken);
-        sendTokenSW(accessToken);
-        onLogin();
-      }
-    });
-  }
-  tokenClient.requestAccessToken();
 }
 function signOut(){
   accessToken=null; sessionStorage.clear();
