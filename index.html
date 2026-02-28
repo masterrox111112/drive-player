@@ -13,19 +13,34 @@
     .logo{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
     .header h1{font-size:1.25rem;font-weight:600;letter-spacing:-.02em}
     .header span{color:var(--muted);font-size:.85rem;font-weight:300;margin-left:4px}
-    .input-card{width:100%;max-width:860px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+    .login-card{width:100%;max-width:860px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 20px;text-align:center;margin-bottom:16px}
+    .login-card h2{font-size:1.1rem;font-weight:600;margin-bottom:8px}
+    .login-card p{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+    .btn-google{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#333;border:none;border-radius:9px;padding:12px 24px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s}
+    .btn-google:hover{opacity:.9}
+    .btn-google:active{transform:scale(.97)}
+    .btn-google svg{width:20px;height:20px}
+    .user-bar{width:100%;max-width:860px;display:none;align-items:center;gap:10px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px}
+    .user-bar.visible{display:flex}
+    .user-bar img{width:28px;height:28px;border-radius:50%}
+    .user-bar span{font-size:.85rem;color:var(--muted);flex:1}
+    .user-bar strong{color:var(--text)}
+    .btn-logout{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:5px 12px;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .btn-logout:hover{border-color:var(--accent);color:var(--text)}
+    .input-card{width:100%;max-width:860px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;display:none}
+    .input-card.visible{display:block}
     .input-label{font-size:.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
     .input-row{display:flex;gap:10px}
     input[type=text]{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:.82rem;padding:11px 14px;outline:none;transition:border-color .2s}
     input[type=text]:focus{border-color:var(--accent)}
     input[type=text]::placeholder{color:var(--muted)}
-    button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:9px;padding:11px 22px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
-    button:hover{opacity:.88}
-    button:active{transform:scale(.97)}
+    .btn-play{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:9px;padding:11px 22px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+    .btn-play:hover{opacity:.88}
+    .btn-play:active{transform:scale(.97)}
     .msg{width:100%;max-width:860px;border-radius:var(--radius);padding:14px 18px;font-size:.88rem;display:none;margin-bottom:16px}
     .msg.visible{display:block}
     .msg.error{background:#2a1a1a;border:1px solid #5c2020;color:#f87171}
-    .msg.warn{background:#1a1a0a;border:1px solid #4a4a10;color:#d4d490;font-size:.82rem}
+    .msg.warn{background:#1a1a0a;border:1px solid #4a4a10;color:#d4d490}
     .loading{width:100%;max-width:860px;display:none;align-items:center;gap:12px;color:var(--muted);font-size:.88rem;margin-bottom:16px}
     .loading.visible{display:flex}
     .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
@@ -37,7 +52,7 @@
     .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     .vtb-label{font-size:.88rem;font-weight:500;color:var(--muted)}
-    #videoTitle{font-size:.95rem;font-weight:600;color:var(--text)}
+    #videoTitle{font-size:.95rem;font-weight:600;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     video{width:100%;display:block;background:#000;max-height:72vh}
     .info-bar{padding:10px 20px;display:flex;gap:16px;align-items:center;border-top:1px solid var(--border)}
     .info-bar a{color:var(--accent);font-size:.82rem;text-decoration:none}
@@ -54,17 +69,40 @@
   <div><h1>Drive Player <span>sem propaganda</span></h1></div>
 </div>
 
-<div class="input-card">
+<!-- Login -->
+<div class="login-card" id="loginCard">
+  <h2>Entrar com Google</h2>
+  <p>Faça login para acessar seus vídeos do Google Drive sem propaganda</p>
+  <button class="btn-google" onclick="signIn()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Entrar com Google
+  </button>
+</div>
+
+<!-- User bar -->
+<div class="user-bar" id="userBar">
+  <img id="userPhoto" src="" alt="">
+  <span>Logado como <strong id="userName"></strong></span>
+  <button class="btn-logout" onclick="signOut()">Sair</button>
+</div>
+
+<!-- Input -->
+<div class="input-card" id="inputCard">
   <div class="input-label">Link do vídeo no Google Drive</div>
   <div class="input-row">
     <input type="text" id="driveUrl" placeholder="https://drive.google.com/file/d/SEU_ID/view" />
-    <button onclick="loadVideo()">▶ Reproduzir</button>
+    <button class="btn-play" onclick="loadVideo()">▶ Reproduzir</button>
   </div>
 </div>
 
 <div class="msg error" id="errorMsg"></div>
 <div class="msg warn" id="warnMsg"></div>
-<div class="loading" id="loading"><div class="spinner"></div> <span id="loadingText">Buscando link de stream...</span></div>
+<div class="loading" id="loading"><div class="spinner"></div> <span id="loadingText">Carregando...</span></div>
 
 <div class="player-wrap" id="playerWrap">
   <div class="video-title-bar">
@@ -75,19 +113,44 @@
   <video id="videoPlayer" controls playsinline></video>
   <div class="info-bar">
     <a id="driveLink" href="#" target="_blank">↗ Abrir no Drive</a>
-    <a id="downloadLink" href="#" download>⬇ Download</a>
   </div>
 </div>
 
 <div class="tips">
-  <div class="tip"><strong>Como usar</strong>Cole o link do Google Drive e clique em Reproduzir.</div>
-  <div class="tip"><strong>Permissão necessária</strong>O vídeo precisa estar como "Qualquer pessoa com o link pode ver".</div>
-  <div class="tip"><strong>Não carrega?</strong>O Drive pode ainda estar processando. Aguarde e tente de novo.</div>
+  <div class="tip"><strong>Como usar</strong>Faça login, cole o link do Drive e clique em Reproduzir.</div>
+  <div class="tip"><strong>Seus vídeos</strong>Funciona com qualquer vídeo do seu Drive ou compartilhado com você.</div>
+  <div class="tip"><strong>Sem propaganda</strong>Player limpo, direto ao ponto.</div>
 </div>
 
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
-// Detecta parâmetros da URL (para uso como "Abrir com" no Drive)
-window.addEventListener('DOMContentLoaded', () => {
+const CLIENT_ID = '275014603111-av3r44rb0shbah6v0kbrbh6bm94q6due.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+
+let accessToken = null;
+let tokenClient = null;
+
+window.onload = () => {
+  // Inicializa o token client
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (response) => {
+      if (response.error) { showErr('Erro no login: ' + response.error); return; }
+      accessToken = response.access_token;
+      onSignedIn();
+    }
+  });
+
+  // Verifica se já tem token salvo
+  const saved = sessionStorage.getItem('drive_token');
+  if (saved) {
+    accessToken = saved;
+    onSignedIn();
+  }
+
+  // Detecta parâmetro de URL (Abrir com)
   const p = new URLSearchParams(location.search);
   const state = p.get('state');
   if (state) {
@@ -95,17 +158,52 @@ window.addEventListener('DOMContentLoaded', () => {
       const j = JSON.parse(decodeURIComponent(state));
       const ids = j.ids || [];
       if (ids.length) {
-        document.getElementById('driveUrl').value = 'https://drive.google.com/file/d/' + ids[0] + '/view';
-        loadVideo();
+        sessionStorage.setItem('pending_id', ids[0]);
       }
     } catch(e) {}
   }
-  const id = p.get('id');
-  if (id) {
-    document.getElementById('driveUrl').value = 'https://drive.google.com/file/d/' + id + '/view';
+};
+
+function signIn() {
+  tokenClient.requestAccessToken();
+}
+
+function signOut() {
+  accessToken = null;
+  sessionStorage.removeItem('drive_token');
+  sessionStorage.removeItem('user_name');
+  sessionStorage.removeItem('user_photo');
+  document.getElementById('loginCard').style.display = '';
+  document.getElementById('userBar').classList.remove('visible');
+  document.getElementById('inputCard').classList.remove('visible');
+  document.getElementById('playerWrap').classList.remove('visible');
+  document.getElementById('errorMsg').classList.remove('visible');
+}
+
+async function onSignedIn() {
+  sessionStorage.setItem('drive_token', accessToken);
+  document.getElementById('loginCard').style.display = 'none';
+  document.getElementById('userBar').classList.add('visible');
+  document.getElementById('inputCard').classList.add('visible');
+
+  // Pega info do usuário
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + accessToken }
+    });
+    const u = await r.json();
+    document.getElementById('userName').textContent = u.name || u.email;
+    if (u.picture) document.getElementById('userPhoto').src = u.picture;
+  } catch(e) {}
+
+  // Se veio de "Abrir com", carrega automaticamente
+  const pendingId = sessionStorage.getItem('pending_id');
+  if (pendingId) {
+    sessionStorage.removeItem('pending_id');
+    document.getElementById('driveUrl').value = 'https://drive.google.com/file/d/' + pendingId + '/view';
     loadVideo();
   }
-});
+}
 
 function extractId(url) {
   const patterns = [
@@ -121,6 +219,8 @@ function extractId(url) {
 }
 
 async function loadVideo() {
+  if (!accessToken) { showErr('Faça login primeiro.'); return; }
+
   const input = document.getElementById('driveUrl').value.trim();
   const errorEl = document.getElementById('errorMsg');
   const warnEl = document.getElementById('warnMsg');
@@ -139,86 +239,89 @@ async function loadVideo() {
   if (!id) { showErr('Link inválido. Use: drive.google.com/file/d/ID/view'); return; }
 
   document.getElementById('driveLink').href = 'https://drive.google.com/file/d/' + id + '/view';
-  document.getElementById('downloadLink').href = 'https://drive.google.com/uc?export=download&id=' + id;
-
   loadingEl.classList.add('visible');
-
-  // ── Estratégia 1: pegar o link de stream via allorigins proxy ──
-  // O Drive retorna links de stream em videplayback.google.com
-  // A página de preview /file/d/ID/preview contém esses links no HTML
-  loadingText.textContent = 'Extraindo link de stream...';
+  loadingText.textContent = 'Buscando informações do arquivo...';
 
   try {
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://drive.google.com/file/d/' + id + '/view');
-    const resp = await fetch(proxyUrl);
-    const data = await resp.json();
-    const html = data.contents || '';
+    // 1. Pega metadados do arquivo via Drive API
+    const metaResp = await fetch(
+      'https://www.googleapis.com/drive/v3/files/' + id + '?fields=name,mimeType,size',
+      { headers: { Authorization: 'Bearer ' + accessToken } }
+    );
+    const meta = await metaResp.json();
 
-    // Tenta extrair links de stream do HTML retornado
-    const streamUrl = extractStreamUrl(html, id);
-
-    if (streamUrl) {
-      loadingEl.classList.remove('visible');
-      video.src = streamUrl;
-      wrap.classList.add('visible');
-      video.play().catch(() => {});
-      return;
+    if (meta.error) {
+      throw new Error(meta.error.message || 'Erro ao acessar arquivo');
     }
-  } catch(e) {
-    console.log('Proxy falhou:', e);
-  }
 
-  // ── Estratégia 2: URL direta de download como stream ──
-  loadingText.textContent = 'Tentando stream direto...';
+    document.getElementById('videoTitle').textContent = meta.name || 'Vídeo do Drive';
+    loadingText.textContent = 'Preparando stream...';
 
-  const directUrl = 'https://drive.google.com/uc?export=download&id=' + id + '&confirm=t';
-  video.src = directUrl;
+    // 2. Monta URL de stream autenticada
+    // O Drive API retorna o conteúdo diretamente com alt=media
+    const streamUrl = 'https://www.googleapis.com/drive/v3/files/' + id + '?alt=media';
 
-  await new Promise(resolve => {
-    video.oncanplay = resolve;
-    video.onerror = resolve;
-    setTimeout(resolve, 6000);
-  });
+    // 3. Carrega no player com o token no header
+    // Como o video element não aceita headers, usamos Blob URL
+    loadingText.textContent = 'Carregando vídeo...';
 
-  if (video.readyState >= 2) {
+    // Fetch com token e cria blob URL para o player
+    // Para arquivos grandes, usamos range requests progressivas
+    const videoResp = await fetch(streamUrl, {
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+        Range: 'bytes=0-1048576' // Carrega primeiro 1MB para começar rápido
+      }
+    });
+
+    if (!videoResp.ok) throw new Error('Erro ao carregar vídeo: ' + videoResp.status);
+
+    const blob = await videoResp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Usa MediaSource para streaming progressivo
+    // Por simplicidade, carrega direto via URL autenticada num novo método
     loadingEl.classList.remove('visible');
-    wrap.classList.add('visible');
-    return;
+
+    // Melhor abordagem: usa fetch stream com MediaSource API
+    playWithMediaSource(id, meta.mimeType || 'video/mp4', wrap, video, loadingEl);
+
+  } catch(e) {
+    loadingEl.classList.remove('visible');
+    console.error(e);
+    showErr('Erro: ' + (e.message || 'Não foi possível carregar o vídeo.'));
   }
-
-  // ── Estratégia 3: Embed iframe do Drive (funciona mas mostra UI do Drive) ──
-  loadingEl.classList.remove('visible');
-  
-  // Substitui o player por iframe como último recurso
-  const playerDiv = document.getElementById('playerWrap');
-  const videoEl = document.getElementById('videoPlayer');
-  const iframe = document.createElement('iframe');
-  iframe.src = 'https://drive.google.com/file/d/' + id + '/preview?rm=minimal';
-  iframe.style.cssText = 'width:100%;aspect-ratio:16/9;border:none;display:block';
-  iframe.allowFullscreen = true;
-  videoEl.replaceWith(iframe);
-
-  warnEl.textContent = '⚠ Usando player do Drive como fallback. Se aparecer "sendo processado", aguarde alguns minutos.';
-  warnEl.classList.add('visible');
-  wrap.classList.add('visible');
 }
 
-function extractStreamUrl(html, id) {
-  // Tenta vários padrões de URL de stream que o Drive embute no HTML
-  const patterns = [
-    /progressiveDownloadUrl["\s:]+["']([^"']+videoplayback[^"']+)['"]/,
-    /"contentUrl"\s*:\s*"([^"]+)"/,
-    /fmt_stream_map[^"]*"([^"]*videoplayback[^"]*)/,
-    /hlsvp["\s:]+["']([^"']+)['"]/,
-    /"url":"(https:\/\/[^"]*videoplayback[^"]*)"/
-  ];
-  for (const p of patterns) {
-    const m = html.match(p);
-    if (m && m[1]) {
-      return m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&').replace(/\\/g, '');
+async function playWithMediaSource(fileId, mimeType, wrap, video, loadingEl) {
+  // Abordagem mais simples e confiável: service worker ou blob stream
+  // Como não temos service worker, vamos usar a URL da API com token na query string
+  // O Drive API aceita access_token como parâmetro
+  
+  const streamUrl = 'https://www.googleapis.com/drive/v3/files/' + fileId + 
+    '?alt=media&access_token=' + encodeURIComponent(accessToken);
+
+  video.src = streamUrl;
+  
+  video.oncanplay = () => {
+    loadingEl.classList.remove('visible');
+    wrap.classList.add('visible');
+    video.play().catch(() => {});
+  };
+
+  video.onerror = (e) => {
+    loadingEl.classList.remove('visible');
+    console.error('Video error:', video.error);
+    showErr('Erro ao reproduzir. Verifique se tem permissão de acesso ao arquivo.');
+  };
+
+  // Timeout de segurança
+  setTimeout(() => {
+    if (!wrap.classList.contains('visible')) {
+      loadingEl.classList.remove('visible');
+      wrap.classList.add('visible');
     }
-  }
-  return null;
+  }, 8000);
 }
 
 function showErr(msg) {
@@ -228,8 +331,10 @@ function showErr(msg) {
   document.getElementById('loading').classList.remove('visible');
 }
 
-document.getElementById('driveUrl').addEventListener('keydown', e => {
-  if (e.key === 'Enter') loadVideo();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('driveUrl').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loadVideo();
+  });
 });
 </script>
 </body>
